@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+    <style>
+      h1{
+        font-weight: bolder;
+        font-size: 2.4em;
+        text-align: center;
+      }
+      
+      .panel > .completed{
+        background-color: lightGreen;
+      }
+      
+      .panel > .open{
+        background-color: lightYellow;
+      }
+      
+      .panel-title{
+        font-weight: bold;
+      }
+    </style>
+
+</head>
+
+<body>
+ <h1>311 Graffiti Requests</h1><br>
+  <div id="results" class="container">  
+    <div id = "template" class="hidden panel panel-default">
+      <div id="color" class="panel-heading">
+        <h3 class="panel-title"></h3>
+      </div>
+      <div class="panel-body">
+        <p></p>
+        <em></em>
+      </div>
+    </div>
+  </div>
+    <script>
+      $.get("https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=100", function(response){
+
+       
+        $.each(response, function(i,v){
+                //console.log(response);
+                
+                
+                if(v.status == "Completed" || v.status == "Open - Dup"){
+                  $("#color").addClass("completed");
+                }
+                else if(v.status == "Open" || v.status == "Completed - Dup"){
+                  $("#color").addClass("open");
+                }
+                
+                var panel = $("#template").clone().removeClass("hidden");
+                
+                panel.find("h3").text(v.service_request_number);
+                panel.find("p").text(v.street_address);
+                panel.find("em").text(v.status);
+                
+                $("#results").append(panel);
+                
+                $("#color").removeClass("completed");
+                $("#color").removeClass("open");
+           
+          });
+        });
+    </script>
+  
+    
+</body>
+</html>
