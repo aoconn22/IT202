@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -40,19 +41,20 @@
         
         
         
-        $.get("https://data.cityofchicago.org/resource/cdmx-wzbz.json?$limit=100", function(response){
-            var uluru = {lat: -25.363, lng: 131.044};
+        $.get("https://data.cityofchicago.org/resource/crimes.json", function(response){
+            
             var map = new google.maps.Map(document.getElementById('map'), {
             zoom: 9,
             center: {lat: parseFloat(response[0].latitude), lng: parseFloat(response[0].longitude)},
             });
-            console.log()
+            console.log(response)
             
             $.each(response, function(i,v){
                 
-                var contentString = v.service_request_number+"<br>"
-                                   +v.street_address+"<br>"
-                                   +v.status;
+                var contentString = v.date+"<br>"
+                                   +v.primary_type+"<br>"
+                                   +v.description+"<br>"
+                                   +v.arrest;
                 
                 var infowindow = new google.maps.InfoWindow({
                     content: contentString
@@ -61,7 +63,7 @@
                 var marker = new google.maps.Marker({
                   position: {lat: parseFloat(v.latitude), lng: parseFloat(v.longitude)},
                   map: map,
-                  title: v.street_address
+                  title: v.primary_type
                 }); 
                 
                 marker.addListener('click', function() {
