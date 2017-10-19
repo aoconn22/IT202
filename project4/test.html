@@ -124,12 +124,18 @@
             }
             
             if (game.lives == 0) {
+                // clear screen so lives can be properly displayed
+                ctx.clearRect(0,0, c.width, c.height);
+                
+                // redraw the score and lives so it is updated before the
+                // animation stops
                 ctx.font = "20px Arial";
                 ctx.fillStyle = "black";
                 ctx.textAlign = "center";
                 ctx.fillText(score + game.score, ((c.width/2) - (c.width/6) - (score.length)), (c.height/15));
-                ctx.fillText("Lives: 0" , (c.width/2) + (c.width/6), (c.height/15));
-            
+                ctx.fillText("Lives: " + game.lives, (c.width/2) + (c.width/6), (c.height/15));
+                
+                // display game over
                 ctx.font = "60px Arial";
                 ctx.fillStyle = "red";
                 ctx.textAlign = "center";
