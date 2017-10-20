@@ -34,6 +34,8 @@
         
         // counter to reduce the x coordinate of harm and bene
         var n = 0;
+        
+        var lastTime = 0;
 
         // set the canvas height and width to the size of the window
         c.width  = window.innerWidth;
@@ -50,6 +52,12 @@
             // clear the canvas to be redrawn on by requestAnimationFrame
         	ctx.clearRect(0,0, c.width, c.height);
         	
+        	// determine the change in time(in seconds) between the last
+        	// animation frame. allows for movement by pixels/second vs
+        	// a set amount of pixels per frame
+        	var now = Date.now();
+            var dt = (now - lastTime) / 1000.0;
+        	
         	// display and update score
         	ctx.font = "20px Arial";
             ctx.fillStyle = "black";
@@ -59,8 +67,8 @@
             ctx.fillText("Lives: " + game.lives, (c.width/2) + (c.width/6), (c.height/15));
         	
         	// update character position properties
-        	harm.x = harm.x-5;
-        	bene.x = bene.x-5;
+        	harm.x = harm.x-(300 * dt);
+        	bene.x = bene.x-(300 * dt);
         	
                     
             // check if player collides with harm and removes a life if true      
@@ -147,6 +155,8 @@
             drawCharacter(harm);
             drawCharacter(bene);
             
+            lastTime = now;
+            
             // begin the game
             if (game.lives > 0){
                 requestAnimationFrame(draw);
@@ -210,15 +220,23 @@
             $("#canvas").on('keydown', function(evt) {
                 console.log(evt);
                 
+                var now = Date.now();
+                var dt = (now - lastTime) / 1000.0;
+                
                 // up arrow
                 if (evt.which == 38) {
-                    player.y = player.y-10;
+                    player.y = player.y-(300 * dt);
                     console.log(player.y);
                 }
                 //down arrow
                 if (evt.which == 40) {
                     player.y = player.y+10;
+                    console.log(evt);
+                    console.log(player.y);
                 }
+                
+                lastTime = Date.now();
+                
             });
         });
         
