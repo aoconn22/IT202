@@ -20,16 +20,19 @@
 </head>
 
 <body>
-    <canvas id="canvas" width=600 height="400" tabindex='1'></canvas>
+    <canvas id="canvas" width=600 height="400"></canvas>
     <script>
         var c=document.getElementById("canvas"); // make this and next line global
         var ctx=c.getContext("2d"); // creates an obkect out of the canvas and allows 
                                     // for 2-D drawing on the element
-        
+                                    
         // set the canvas height and width to the size of the window
         c.width  = window.innerWidth;
         c.height = window.innerHeight;
         
+        window.addEventListener('keydown', handleKeyDown, true);
+        window.addEventListener('keyup', handleKeyUp, true);
+
         var myImage = new Image();
         myImage.src = 'http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/77/778679f2dc7be40bad2c69f246586e7691e9fec2_full.jpg';
         var imgHeight = myImage.naturalHeight;
@@ -41,8 +44,10 @@
         var player = {x: (c.width/2)-(imgWidth/2), y: c.height- imgHeight, radius: imgHeight/2, shape: 'image'};
         var harm = {x: 100, y: 0, radius: 25, color: 'red', shape: 'circle'};
         var bene = {x: 300, y: 0, radius: 25, color: 'green', shape: 'circle'};
+        var key_left = false;
+        var key_right = false;
         
-        var lastTime = 0;
+        var lastTime = Date.now();
         
         // set the location of harm and bene to the top of the window
         harm.y = 0-harm.radius;
@@ -70,7 +75,17 @@
         	// update character position properties
         	harm.y = harm.y + (300 * dt);
         	bene.y = bene.y + (300 * dt);
+        	
+        	// update player position
+        	if (key_left) {
+                player.x = player.x - (300 * dt);
+            }
             
+            if (key_right) {
+                player.x = player.x + (300 * dt);
+            }
+            
+            // check if player collides with harm and reduces score if true
             if (areBoxColliding(player,harm)) {
                 game.lives--;
                 harm.y = 0 - harm.radius;
@@ -132,6 +147,7 @@
             	}
             }
             
+            // check for game over
             if (game.lives == 0) {
                 // clear screen so lives can be properly displayed
                 ctx.clearRect(0,0, c.width, c.height);
@@ -156,7 +172,7 @@
             drawCharacter(harm);
             drawCharacter(bene);
             
-            //lastTime = now;
+            // change last time to calculate the milliseconds between the animation frames
             lastTime = Date.now();
             // begin the game
             if (game.lives > 0){
@@ -190,12 +206,13 @@
             ctx.stroke();
         }
         
+        // draw the player image
         function drawImage (image, x, y) {
         	ctx.drawImage(image, x, y);
             
         }
     
-        // check if the player is colliding with harm or bene
+        // check if two circle characters are colliding
         function areColliding(character1,character2) {
         	                
             var dx = character1.x - character2.x;
@@ -207,6 +224,7 @@
             }
         }
         
+        // check for rectangle to circle collision
         function areBoxColliding(boxChar,circleChar) {
     
             if ((circleChar.x+circleChar.radius)>=(boxChar.x)&&
@@ -229,26 +247,25 @@
         		return true;
         	}
         }
-    
-        // check for the up or down arrow keys being pressed and move player accordingly
-        $(document).ready(function() {
-            $("#canvas").on('keydown', function(evt) {
-                console.log(evt);
-                
-                // up arrow
-                if (evt.which == 37) {
-                    player.x = player.x-10;
-                    console.log(player.y);
-                }
-                //down arrow
-                if (evt.which == 39) {
-                    
-                    
-                    player.x = player.x+10;
-                    console.log(player.x);
-                }
-            });
-        });
+        
+        // key down event handler
+        function handleKeyDown(event) {
+            if (event.keyCode == 37) {
+                key_left = true;
+            }
+            else if (event.keyCode == 39) {
+                key_right = true;
+            }
+        }
+        // key up event handler
+        function handleKeyUp(event) {
+            if (event.keyCode == 37) {
+                key_left = false;
+            }
+            else if (event.keyCode == 39) {
+                key_right = false;
+            }
+        }
         
         // call requestAnimationFrame and begin recursion within draw function
         requestAnimationFrame(draw);
