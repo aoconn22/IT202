@@ -26,23 +26,25 @@
         var ctx=c.getContext("2d"); // creates an obkect out of the canvas and allows 
                                     // for 2-D drawing on the element
         
-        // global variables setting the objects of the game and the circles within
-        var game = {score: 0, lives: 3};
-        var player = {x: (c.width/2)-25, y: c.height, radius: 25, color: 'blue', shape: 'circle'};
-        var harm = {x: 100, y: 0, radius: 25, color: 'red', shape: 'circle', speed: 300};
-        var bene = {x: 300, y: 0, radius: 25, color: 'green', shape: 'circle'};
-        
-        // counter to reduce the x coordinate of harm and bene
-        var n = 0;
-        
-        var lastTime = 0;
-
         // set the canvas height and width to the size of the window
         c.width  = window.innerWidth;
         c.height = window.innerHeight;
         
-        // set the location of harm and bene to the far side of the window
-        //player.x = c.width/2
+        var myImage = new Image();
+        myImage.src = 'http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/77/778679f2dc7be40bad2c69f246586e7691e9fec2_full.jpg';
+        var imgHeight = myImage.naturalHeight;
+        var imgWidth = myImage.naturalWidth;
+        console.log(imgHeight);
+        console.log(imgWidth);
+        // global variables setting the objects of the game and the circles within
+        var game = {score: 0, lives: 3};
+        var player = {x: (c.width/2)-(imgWidth/2), y: c.height- imgHeight, radius: imgHeight/2, shape: 'image'};
+        var harm = {x: 100, y: 0, radius: 25, color: 'red', shape: 'circle'};
+        var bene = {x: 300, y: 0, radius: 25, color: 'green', shape: 'circle'};
+        
+        var lastTime = 0;
+        
+        // set the location of harm and bene to the top of the window
         harm.y = 0-harm.radius;
         bene.y = 0-bene.radius;
     
@@ -68,10 +70,8 @@
         	// update character position properties
         	harm.y = harm.y + (300 * dt);
         	bene.y = bene.y + (300 * dt);
-        	
-                    
-            // check if player collides with harm and removes a life if true      
-            if (areColliding(player,harm)) {
+            
+            if (areBoxColliding(player,harm)) {
                 game.lives--;
                 harm.y = 0 - harm.radius;
             	harm.x = Math.floor((Math.random()*(c.width))-harm.radius);
@@ -80,7 +80,7 @@
             	}
             }
             // check if player collides with bene and adds points if true
-            if (areColliding(player,bene)) {
+            if (areBoxColliding(player,bene)) {
                 game.score++;
                 bene.y = 0 - bene.radius;
             	bene.x = Math.floor((Math.random()*(c.width))-bene.radius);
@@ -89,8 +89,9 @@
             	}
             }
             
+            
             // check if harm and bene are on top of eachother and resets their
-            // positions if so. rechecks if they're past the top of the screen
+            // positions if so. rechecks if they're past the side of the screen
             // and resets position if true
             if (areColliding(harm,bene)) {
                 bene.y = 0 - bene.radius;
@@ -105,15 +106,16 @@
             	}
             }
             
-            // check if player hits the top or bottom of the screen and stops they do
-            if (reachedEdge(player, 'left')) {
-            	player.x = player.radius;
+            // check if player hits the left or right side of the screen and stops they do
+            if (player.x <=0) {
+            	player.x = 0;
             }
-            if (reachedEdge(player, 'right')) {
-            	player.x = c.width - player.radius;
+            if (player.x + imgWidth >= c.width) {
+            	player.x = c.width - imgWidth;
             }
             
-            // checks if harm or bene hit left edge or past the top and resets 
+
+            // checks if harm or bene hit the bottom or past the left side and resets 
             // their position if true
             if (reachedEdge(bene, 'bottom')) {
             	bene.y = 0 - bene.radius;
@@ -123,21 +125,6 @@
             	}
             }
             if (reachedEdge(harm, 'bottom')) {
-            	harm.y = 0 - harm.radius;
-                harm.x = Math.floor((Math.random()*(c.width))-harm.radius);
-                if (reachedEdge(harm, 'left')) {
-            	    harm.x = harm.radius;
-            	}
-            }
-            
-            if (reachedEdge(bene, 'left')) {
-            	bene.y = 0 - bene.radius;
-                bene.x = Math.floor((Math.random()*(c.width))-bene.radius);
-                if (reachedEdge(bene, 'left')) {
-            	    bene.x = bene.radius;
-            	}
-            }
-            if (reachedEdge(harm, 'left')) {
             	harm.y = 0 - harm.radius;
                 harm.x = Math.floor((Math.random()*(c.width))-harm.radius);
                 if (reachedEdge(harm, 'left')) {
@@ -187,7 +174,7 @@
         		// call function to draw square
         		break;
             case 'image' :
-        		// call function to draw image
+        		drawImage(myImage, character.x, character.y);
         		break;
         	default: 
         		console.log('character.shape case fell through');	
@@ -202,6 +189,11 @@
             ctx.fill();
             ctx.stroke();
         }
+        
+        function drawImage (image, x, y) {
+        	ctx.drawImage(image, x, y);
+            
+        }
     
         // check if the player is colliding with harm or bene
         function areColliding(character1,character2) {
@@ -213,6 +205,15 @@
             if (distance < character1.radius + character2.radius) {
                 return true;
             }
+        }
+        
+        function areBoxColliding(boxChar,circleChar) {
+    
+            if ((circleChar.x+circleChar.radius)>=(boxChar.x)&&
+                (circleChar.x-circleChar.radius)<=(boxChar.x+imgWidth)&&
+                (circleChar.y+circleChar.radius)>=(boxChar.y)) {
+                    return true;   
+                }
         }
         
         // check if a character has reached the edge. used to check for the 
