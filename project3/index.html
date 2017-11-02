@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+  <html lang="en">
+   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+     <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+  
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+   
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>-->
+
+    
+
+
+
+
+   
+
+
+
+    <!-- Custom styles for this template -->
+   <!--<link href="jumbotron.css" rel="stylesheet">-->
+    
+    <style type="text/css">
+      nav {
+        display: block;
+      }
+      .screen{
+        display:none;
+      }
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      
+    </style>
+    
+    
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+    <hr>
+    <hr>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#input">Input <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#text">Text</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="map-link" href="#map-tab">Map</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <div class="container screen" id="input">
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-3">Chicago Food Inspection Search</h1>
+          <div id="search-data">
+              <label for="inspection-date">Inspection Date</label><br>
+              <input type="date" name="inspection_date" id="inspection-date">
+              
+              <br>
+              <br>
+              
+              <label for="facility-type">Facility Type</label><br>
+              <select id="facility-type" name="facility_type">
+                <option value=""></option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Grocery Store">Grocery Store</option>
+                <option value="School">School</option>
+                <option value="Daycare (2 - 6 Years)">Daycare (2 - 6 Years)</option>
+                <option value="Bakery">Bakery</option>
+                <option value="Children's Services Facility">Children's Services Facility</option>
+                <option value="Daycare Above and Under 2 Years">Daycare Above and Under 2 Years</option>
+              </select>
+              
+              <br>
+              <br>
+              
+              <label for="inspection-result">Inspection Result</label><br>
+              <select id="inspection-result" name="results">
+                <option value=""></option>
+                <option value="Pass">Pass</option>
+                <option value="Fail">Fail</option>
+                <option value="Pass w/ Conditions">Pass w/ Conditions</option>
+              </select>
+              
+              <br>
+              <br>
+              
+              <label for="zip">Zip</label><br>
+              <input type="text" name="zip" id="zip"><br><br>
+              <button type="submit" id="search-button" class="btn btn-primary btn-lg">Search</button>
+          </div>
+      
+        </div>
+      </div>
+    </div>
+    
+    <div class="container screen" id="text">
+      <div id="accordion" role="tablist">
+        <div class="card" id="card">
+          <div class="card-header" role="tab" id="headingOne">
+            <h5 class="mb-0">
+              <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                <div id="card-name"></div>
+              </a>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body" id="card-body"></div>
+          </div>
+        </div>
+        
+      </div>  
+    </div>
+    
+    <div class="container screen" id="map-tab">
+      <div id = "search-number"></div>
+      <br>
+        <div id="map"></div>
+    </div>
+
+      <hr>
+    </div>
+    
+    <script>
+      function initMap() {
+      
+          var endpoint = "https://data.cityofchicago.org/resource/cwig-ma7x.json?";
+      
+          searchObj = new Object();
+          searchObj.inspection_date = $("#inspection-date").val();
+          searchObj.facility_type = $("#facility-type").val();
+          searchObj.results = $("#inspection-result").val();
+          searchObj.zip = $("#zip").val();
+        
+          if(searchObj.facility_type != ""){
+            endpoint = endpoint + "facility_type=" + searchObj.facility_type;
+          }
+          if(searchObj.inspection_date != ""){
+            endpoint = endpoint + "&inspection_date=" + searchObj.inspection_date;
+          }
+          if(searchObj.results != ""){
+            endpoint = endpoint + "&results=" + searchObj.results;
+          }
+          if(searchObj.zip != ""){
+            endpoint = endpoint + "&zip=" + searchObj.zip;
+          }
+        
+        $.get(endpoint, function(response){
+          $("#search-number").text("Your search returned " + response.length + " results");
+          console.log(endpoint);
+          //console.log(parseFloat(response[0].latitude));
+          console.log(response);
+            var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 9,
+            center: {lat: parseFloat(response[0].latitude), lng: parseFloat(response[0].longitude)},
+            });
+           console.log(response);
+            
+            $.each(response, function(i,v){
+                
+                var contentString = "Known as: "+v.aka_name+"<br>"
+                                    +"<br>"
+                                    +"Doing business as: "+v.dba_name+"<br>"
+                                    +"Address: "+v.address+"<br>"
+                                    +"Inspection Date: "+v.inspection_date+"<br>"
+                                    +"Test result: "+v.results+"<br>";
+                
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+
+                var marker = new google.maps.Marker({
+                  position: {lat: parseFloat(v.latitude), lng: parseFloat(v.longitude)},
+                  map: map,
+                  title: v.aka_name
+                }); 
+                
+                marker.addListener('click', function() {
+                infowindow.open(map, marker);
+                });
+ 
+                if(i<1){
+                  $("#card-name").text(v.aka_name)
+                  $("#card-body").html(contentString);
+                }
+            
+                if(i>0){
+                  var clone = $("#card").clone();
+                  
+                  var cardName = v.aka_name;
+                  
+                  clone.find("#card-name").text(cardName);
+                  clone.find("#card-body").html(contentString);
+                  $("#accordion").append(clone);
+                }
+            });
+            });
+        
+      
+      }   
+    </script>
+    
+    <script>
+      function showsScreen(screenId){
+        $(".screen").hide();
+        screenId = $(this).attr("href");
+        $(screenId).show();
+      }
+    </script>
+    
+    <script>
+      $(document).ready(function(){
+        $("#input").show();
+      });
+    
+      $(".nav-link").on("click", showsScreen);
+    </script>
+  
+    <script>
+      $("#search-button").on("click", function(){
+        $(".screen").hide();
+        $("#map-tab").show
+        $("#map-tab").ready(function(){
+          $("#map-tab").css("display", "initial");
+          initMap();
+        });
+      });
+    </script>
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAY9xb_RY-PhQmhTIx7B188Eqa5ZgeIdnU">
+    </script>   
+
+</body>
+
+</html>
