@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  
+  <style type="text/css">
+      html, body {
+          width:  100%;
+          height: 100%;
+          margin: 0px;
+          overflow: hidden;
+          display: block;
+        }
+  </style>
+  
+</head>
+
+<body>
+    <canvas id="canvas" width=600 height="400" tabindex='1'></canvas>
+    <script>
+        var c=document.getElementById("canvas"); // make this and next line global
+        var ctx=c.getContext("2d"); // creates an obkect out of the canvas and allows 
+                                    // for 2-D drawing on the element
+        
+        // set the canvas height and width to the size of the window
+        c.width  = window.innerWidth;
+        c.height = window.innerHeight;
+        
+        window.addEventListener('keydown', handleKeyDown, true);
+        window.addEventListener('keyup', handleKeyUp, true);
+        
+        // global variables setting the objects of the game and the circles within
+        var game = {score: 0, lives: 3};
+        var player = {x: (c.width/2), y: c.height-25, radius: 25, color: 'blue', shape: 'circle'};
+        var harm = {x: 100, y: 0, radius: 25, color: 'red', shape: 'circle', speed: 300};
+        var bene = {x: 300, y: 0, radius: 25, color: 'green', shape: 'circle'};
+        
+        var key_left = false;
+        var key_right = false;
+        
+        var lastTime = Date.now();
+
+        
+        
+        // set the location of harm and bene to the far side of the window
+        //player.x = c.width/2
+        harm.y = 0-harm.radius;
+        bene.y = 0-bene.radius;
+    
+
+        // main recursive function to animate the screen and play the game
+        function draw () {
+        
+            // clear the canvas to be redrawn on by requestAnimationFrame
+        	ctx.clearRect(0,0, c.width, c.height);
+        	
+        	var now = Date.now();
+            var dt = (now - lastTime) / 1000.0;
+        	
+        	// display and update score
+        	ctx.font = "20px Arial";
+            ctx.fillStyle = "black";
+            ctx.textAlign = "center";
+            var score = "Score: ";
+            ctx.fillText(score + game.score, ((c.width/2) - (c.width/6) - (score.length)), (c.height/15));
+            ctx.fillText("Lives: " + game.lives, (c.width/2) + (c.width/6), (c.height/15));
+        	
+        	
+        	// update character position properties
+        	harm.y = harm.y + (300 * dt);
+        	bene.y = bene.y + (300 * dt);
+        	
+        	// update player position
+        	if (key_left) {
+                player.x = player.x - (300 * dt);
+            }
+            
+            if (key_right) {
+                player.x = player.x + (300 * dt);
+            }
+        	
+            // check if player collides with harm and removes a life if true      
+            if (areColliding(player,harm)) {
+                game.lives--;
+                harm.y = 0 - harm.radius;
+            	harm.x = Math.floor((Math.random()*(c.width))-harm.radius);
+            	if (reachedEdge(harm, 'left')) {
+            	    harm.x = harm.radius;
+            	}
+            }
+            // check if player collides with bene and adds points if true
+            if (areColliding(player,bene)) {
+                game.score++;
+                bene.y = 0 - bene.radius;
+            	bene.x = Math.floor((Math.random()*(c.width))-bene.radius);
+            	if (reachedEdge(bene, 'left')) {
+            	    bene.x = bene.radius;
+            	}
+            }
+            
+            // check if harm and bene are on top of eachother and resets their
+            // positions if so. rechecks if they're past the top of the screen
+            // and resets position if true
+            if (areColliding(harm,bene)) {
+                bene.y = 0 - bene.radius;
+            	bene.x = Math.floor((Math.random()*(c.width))-bene.radius);
+                if (reachedEdge(bene, 'left')) {
+                    bene.x = bene.radius;
+            	}
+            	harm.y = 0 - harm.radius;
+            	harm.x = Math.floor((Math.random()*(c.width))-harm.radius);
+            	if (reachedEdge(harm, 'left')) {
+                    harm.x = harm.radius;
+            	}
+            }
+            
+            // check if player hits the top or bottom of the screen and stops they do
+            if (reachedEdge(player, 'left')) {
+            	player.x = player.radius;
+            }
+            if (reachedEdge(player, 'right')) {
+            	player.x = c.width - player.radius;
+            }
+            
+            // checks if harm or bene hit left edge or past the top and resets 
+            // their position if true
+            if (reachedEdge(bene, 'bottom')) {
+            	bene.y = 0 - bene.radius;
+            	bene.x = Math.floor((Math.random()*(c.width))-bene.radius);
+                if (reachedEdge(bene, 'left')) {
+            	    bene.x = bene.radius;
+            	}
+            }
+            if (reachedEdge(harm, 'bottom')) {
+            	harm.y = 0 - harm.radius;
+                harm.x = Math.floor((Math.random()*(c.width))-harm.radius);
+                if (reachedEdge(harm, 'left')) {
+            	    harm.x = harm.radius;
+            	}
+            }
+            
+            if (game.lives == 0) {
+                // clear screen so lives can be properly displayed
+                ctx.clearRect(0,0, c.width, c.height);
+                
+                // redraw the score and lives so it is updated before the
+                // animation stops
+                ctx.font = "20px Arial";
+                ctx.fillStyle = "black";
+                ctx.textAlign = "center";
+                ctx.fillText(score + game.score, ((c.width/2) - (c.width/6) - (score.length)), (c.height/15));
+                ctx.fillText("Lives: " + game.lives, (c.width/2) + (c.width/6), (c.height/15));
+                
+                // display game over
+                ctx.font = "60px Arial";
+                ctx.fillStyle = "red";
+                ctx.textAlign = "center";
+                ctx.fillText("GAME OVER", c.width/2, c.height/2);
+            }
+            
+            // draw the game objects
+            drawCharacter(player);
+            drawCharacter(harm);
+            drawCharacter(bene);
+            
+            //lastTime = now;
+            lastTime = Date.now();
+            // begin the game
+            if (game.lives > 0){
+                requestAnimationFrame(draw);
+            }
+        }
+        
+        // draw a character based on shape
+        function drawCharacter (character) {
+        switch (character.shape) {
+        	case 'circle' :
+        		drawCircle(character.x, character.y, character.radius, character.color);
+        		break;
+            case 'square' :
+        		// call function to draw square
+        		break;
+            case 'image' :
+        		// call function to draw image
+        		break;
+        	default: 
+        		console.log('character.shape case fell through');	
+            }	
+        }  
+        
+        // draw a circle with defined coordinates, size, and color
+        function drawCircle (x, y, radius, color) {
+        	ctx.beginPath();
+            ctx.arc(x,y,radius,0,2*Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.stroke();
+        }
+    
+        // check if the player is colliding with harm or bene
+        function areColliding(character1,character2) {
+        	                
+            var dx = character1.x - character2.x;
+            var dy = character1.y - character2.y;
+            var distance = Math.sqrt((dx * dx) + (dy * dy));
+                
+            if (distance < character1.radius + character2.radius) {
+                return true;
+            }
+        }
+        
+        // check if a character has reached the edge. used to check for the 
+        // player hitting the top or bottom and if harm or bene reach the left edge
+        function reachedEdge(character, edge) {
+        	if (edge == 'bottom' && (character.y - character.radius) > c.height){
+        		return true;
+        	}
+        	if (edge == 'right' && (character.x + character.radius) > c.width){
+        		return true;
+        	}
+        	if (edge == 'left' && (character.x - character.radius) < 0){
+        		return true;
+        	}
+        }
+        
+        // key down event handler
+        function handleKeyDown(event) {
+            if (event.keyCode == 37) {
+                key_left = true;
+            }
+            else if (event.keyCode == 39) {
+                key_right = true;
+            }
+        }
+        // key up event handler
+        function handleKeyUp(event) {
+            if (event.keyCode == 37) {
+                key_left = false;
+            }
+            else if (event.keyCode == 39) {
+                key_right = false;
+            }
+        }
+    
+        // check for the up or down arrow keys being pressed and move player accordingly
+        $(document).ready(function() {
+            
+        
+        // call requestAnimationFrame and begin recursion within draw function
+        requestAnimationFrame(draw);
+});
+    </script>
+
+</body>
+
