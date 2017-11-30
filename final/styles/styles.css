@@ -1,0 +1,42 @@
+.line-button {
+    width :100%;
+    margin: 0.5px;}
+.station-button {
+    width :100%;
+    margin: 0.5px;
+    background-color: white;
+}
+#red {
+    background-color: red;
+    color: white;}
+#blue {
+    background-color: blue;
+    color: white;}
+#brn {
+    background-color: brown;
+    color: white;}
+#g {
+    background-color: green;
+    color: white;}
+#o {
+    background-color: orange;
+    color: white;}
+#p {
+    background-color: purple;
+    color: white;}
+#pnk {
+    background-color: pink;
+    color: white;}
+#y {
+    background-color: yellow;
+    color: white;}
+.screen{
+        display:none;
+}
+#map {
+    height: 100%;
+}
+html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;}
